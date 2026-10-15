@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entretien | SmartStart Coach</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #ffffff;
+      --ink: #1c263b;
+      --muted: #637087;
+      --line: #dce2e9;
+      --green: #e32920;
+      --green-dark: #c91f19;
+      --mint: #fff0ee;
+      --soft: #f5f7fa;
+      font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 320px; background: var(--paper); }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 12px; max-width: 820px; margin: 0 auto; padding: 18px 16px; border-bottom: 1px solid var(--line); }
+    header strong { font-size: 17px; }
+    .progress { color: var(--muted); font-size: 13px; }
+    main { max-width: 820px; margin: 0 auto; padding: 16px 16px 150px; }
+    .bubble { max-width: 82%; margin: 12px 0; padding: 12px 15px; border-radius: 14px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .coach { background: var(--soft); border-top-left-radius: 4px; }
+    .student { margin-left: auto; color: white; background: var(--green); border-top-right-radius: 4px; }
+    .thinking { color: var(--muted); font-style: italic; }
+    .notice { margin: 12px 0; padding: 12px 15px; color: #a14c3c; background: var(--mint); border-radius: 8px; font-size: 14px; }
+    .done { margin: 18px 0; padding: 16px; background: var(--mint); border-radius: 8px; }
+    .composer[hidden] { display: none; }
+    .composer { position: fixed; left: 0; right: 0; bottom: 0; background: var(--paper); border-top: 1px solid var(--line); }
+    .composer form { display: flex; gap: 10px; max-width: 820px; margin: 0 auto; padding: 14px 16px; }
+    textarea { flex: 1; min-height: 52px; max-height: 160px; padding: 12px; color: var(--ink); border: 1px solid var(--line); border-radius: 10px; font: inherit; resize: vertical; }
+    textarea:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(227, 41, 32, .1); }
+    .button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 18px; color: white; background: var(--green); border: 0; border-radius: 10px; font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
+    .button:hover { background: var(--green-dark); }
+    .button:disabled { opacity: .5; cursor: wait; }
+    a.back { color: var(--muted); font-size: 13px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div><strong>SmartStart Coach</strong> <span class="progress" id="progress"></span></div>
+    <a class="back" href="index.html" id="back-link">← Profil</a>
+  </header>
+  <main id="conversation" aria-live="polite"></main>
+  <div class="composer">
+    <form id="composer">
+      <textarea id="answer" rows="2" required></textarea>
+      <button class="button" type="submit" id="send">Envoyer</button>
+    </form>
+  </div>
+
+  <script>
+    const TEXT = {
+      fr: { start: "Bonjour", placeholder: "Écris ta réponse…", send: "Envoyer", thinking: "Le coach réfléchit…", question: "Question", feedbackReady: "L’entretien est terminé. Ton feedback est prêt.", openFeedback: "Voir mon feedback", error: "Le coach ne répond pas. Vérifie que l’agent est lancé, puis réessaie.", back: "← Profil" },
+      de: { start: "Hallo", placeholder: "Schreib deine Antwort…", send: "Senden", thinking: "Der Coach denkt nach…", question: "Frage", feedbackReady: "Das Gespräch ist fertig. Dein Feedback ist bereit.", openFeedback: "Mein Feedback ansehen", error: "Der Coach antwortet nicht. Prüfe, ob der Agent läuft, und versuche es nochmals.", back: "← Profil" },
+      it: { start: "Ciao", placeholder: "Scrivi la tua risposta…", send: "Invia", thinking: "Il coach sta riflettendo…", question: "Domanda", feedbackReady: "Il colloquio è finito. Il tuo feedback è pronto.", openFeedback: "Vedi il mio feedback", error: "Il coach non risponde. Verifica che l’agente sia avviato e riprova.", back: "← Profilo" },
+    };
+
+    function readJSON(key) {
+      try { return JSON.parse(sessionStorage.getItem(key) || "null"); } catch { return null; }
+    }
+    const params = new URLSearchParams(location.search);
+    const config = readJSON("smartstart.config") || { language: params.get("lang") || "fr" };
+    const lang = TEXT[config.language] ? config.language : "fr";
+    const t = TEXT[lang];
+    document.documentElement.lang = lang;
+    document.querySelector("#answer").placeholder = t.placeholder;
+    document.querySelector("#send").textContent = t.send;
+    document.querySelector("#back-link").textContent = t.back;
+
+    const conversation = document.querySelector("#conversation");
+    const form = document.querySelector("#composer");
+    const answer = document.querySelector("#answer");
+    const sendButton = document.querySelector("#send");
+    let threadId = null;
+    let configSent = false;
+
+    function addBubble(text, who) {
+      const div = document.createElement("div");
+      div.className = `bubble ${who}`;
+      div.textContent = text;
+      conversation.append(div);
+      div.scrollIntoView({ behavior: "smooth", block: "end" });
+      return div;
+    }
+
+    async function post(path, body) {
+      const response = await fetch(`/agent${path}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || data.__error__) throw new Error(data.__error__?.message || data.error || response.statusText);
+      return data;
+    }
+
+    function showFeedbackLink(state) {
+      const fb = state.final_feedback || {};
+      sessionStorage.setItem("smartstart.feedback", JSON.stringify({
+        texte: fb.texte, avec_soutien: fb.avec_soutien, donnees: fb, langue: lang,
+      }));
+      sessionStorage.setItem("smartstart.language", lang);
+      const box = document.createElement("div");
+      box.className = "done";
+      const p = document.createElement("p");
+      p.textContent = t.feedbackReady;
+      const link = document.createElement("a");
+      link.className = "button";
+      link.href = "feedback.html";
+      link.textContent = t.openFeedback;
+      box.append(p, link);
+      conversation.append(box);
+      box.scrollIntoView({ behavior: "smooth", block: "end" });
+      document.querySelector(".composer").hidden = true;
+    }
+
+    async function send(text, showStudent = true) {
+      if (showStudent) addBubble(text, "student");
+      const waiting = addBubble(t.thinking, "coach thinking");
+      sendButton.disabled = true;
+      try {
+        if (!threadId) threadId = (await post("/threads", {})).thread_id;
+        const input = { messages: [{ role: "user", content: text }] };
+        if (!configSent) input.config = config;
+        const state = await post(`/threads/${threadId}/runs/wait`, { assistant_id: "agent", input });
+        configSent = true;
+        waiting.remove();
+        const messages = state.messages || [];
+        const last = messages[messages.length - 1];
+        if (last && last.content) addBubble(last.content, "coach");
+        if (state.question_count) {
+          document.querySelector("#progress").textContent = `· ${t.question} ${state.question_count}/13`;
+        }
+        if (state.final_feedback) showFeedbackLink(state);
+      } catch (error) {
+        waiting.remove();
+        const notice = document.createElement("div");
+        notice.className = "notice";
+        notice.textContent = `${t.error} (${error.message})`;
+        conversation.append(notice);
+      } finally {
+        sendButton.disabled = false;
+        answer.focus();
+      }
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const text = answer.value.trim();
+      if (!text || sendButton.disabled) return;
+      answer.value = "";
+      send(text);
+    });
+    answer.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        form.requestSubmit();
+      }
+    });
+
+    send(t.start, false);  // l'agent commence par l'accueil et la 1re question
+  </script>
+</body>
+</html>

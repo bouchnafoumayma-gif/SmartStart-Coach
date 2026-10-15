@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>Préparer mon entretien | SmartStart Coach</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #ffffff;
+      --ink: #1c263b;
+      --muted: #637087;
+      --line: #dce2e9;
+      --green: #e32920;
+      --green-dark: #c91f19;
+      --mint: #fff0ee;
+      --coral: #e32920;
+      --yellow: #dce2e9;
+      --white: #ffffff;
+      --shadow: 0 2px 4px rgba(24, 37, 59, .08);
+      font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--paper);
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .shell { width: min(1120px, calc(100% - 48px)); margin: 0 auto; }
+    header {
+      height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #edf0f4;
+    }
+    .brand { display: flex; align-items: center; gap: 11px; font-weight: 750; }
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      color: white;
+      background: #e32920;
+      font-family: inherit;
+      font-size: 27px;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .header-note { color: var(--muted); font-size: 13px; }
+    .header-nav { display: flex; align-items: center; gap: 24px; }
+    .header-nav a { color: #526078; text-decoration: none; font-size: 14px; }
+    .header-nav a.active { color: var(--ink); font-weight: 750; }
+    .language-switch { display: flex; align-items: center; gap: 3px; }
+    .language-switch button { min-width: 35px; height: 35px; padding: 0 8px; color: #526078; background: transparent; border: 0; border-radius: 10px; font-size: 12px; }
+    .language-switch button[aria-pressed="true"] { color: var(--green-dark); background: var(--mint); font-weight: 750; }
+    .powered-by { color: #657087; font-size: 11px; white-space: nowrap; }
+    .powered-by strong { color: #34415a; }
+    main { padding: 43px 0 76px; }
+    .intro { max-width: 840px; margin: 0 auto 34px; animation: rise .45s ease both; }
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--coral); }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      max-width: 760px;
+      margin: 12px 0 11px;
+      font-family: inherit;
+      font-size: clamp(30px, 4vw, 36px);
+      font-weight: 760;
+      line-height: 1.18;
+    }
+    .intro p { max-width: 570px; color: var(--muted); line-height: 1.6; margin-bottom: 0; }
+    .layout { display: block; width: min(840px, 100%); margin: 0 auto; }
+    .rail { position: static; padding: 0; }
+    .progress-title { display: none; }
+    .step-list { position: relative; display: flex; gap: 0; margin: 0 0 39px; }
+    .step-list::before { position: absolute; top: 12px; left: 12%; right: 12%; height: 1px; content: ""; background: var(--line); }
+    .step-item {
+      display: flex;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      gap: 10px;
+      min-width: 0;
+      padding: 0 8px;
+      color: #738096;
+      background: white;
+      font-size: 13px;
+      transition: background .2s ease, color .2s ease;
+    }
+    .step-item > span:last-child { min-width: 0; overflow-wrap: anywhere; }
+    .step-item.active { color: var(--ink); font-weight: 750; }
+    .step-item.complete { color: var(--green); }
+    .step-number {
+      display: grid;
+      place-items: center;
+      flex: 0 0 34px;
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 50%;
+      color: var(--green-dark);
+      background: var(--mint);
+      font-size: 13px;
+      font-weight: 750;
+    }
+    .step-item.active .step-number { color: white; background: var(--green); }
+    .step-item.complete .step-number { color: white; background: #176e58; }
+    .privacy-note {
+      margin: -24px 0 24px;
+      padding: 0;
+      border: 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+    .privacy-note strong { display: inline; color: var(--ink); margin-right: 4px; }
+    .form-panel {
+      min-height: 520px;
+      padding: 0;
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      animation: rise .5s .07s ease both;
+    }
+    .step-content { display: none; }
+    .step-content.active { display: block; animation: reveal .25s ease both; }
+    .step-kicker { display: none; }
+    h2 { margin-bottom: 22px; font-family: inherit; font-size: 25px; font-weight: 750; }
+    .step-description { margin: -13px 0 23px; color: var(--muted); font-size: 14px; line-height: 1.55; }
+    .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 16px; }
+    .field { min-width: 0; }
+    .field.full { grid-column: 1 / -1; }
+    label, .legend { display: block; margin-bottom: 7px; font-size: 13px; font-weight: 750; }
+    .optional { color: #89918e; font-weight: 500; }
+    input, select, textarea {
+      display: block;
+      width: 100%;
+      min-height: 45px;
+      padding: 11px 12px;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid #dce2e9;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    textarea { min-height: 92px; resize: vertical; line-height: 1.5; }
+    input:focus, select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(227, 41, 32, .1); }
+    .occupation-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; margin-bottom: 25px; }
+    .occupation-option {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-height: 78px;
+      padding: 14px 17px;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid #dce2e9;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      text-align: left;
+      font-size: 14px;
+      font-weight: 750;
+    }
+    .occupation-option:hover { border-color: #f4aaa6; background: #fff8f7; }
+    .occupation-option[aria-checked="true"] { color: var(--green-dark); background: var(--mint); border-color: var(--green); box-shadow: none; }
+    .occupation-icon { display: grid; place-items: center; flex: 0 0 26px; width: 26px; height: 26px; color: currentColor; font-size: 19px; }
+    .occupation-check { margin-left: auto; color: var(--green); font-size: 20px; }
+    .offer-field { margin: 0 0 21px; }
+    .offer-field textarea { min-height: 112px; }
+    [hidden] { display: none !important; }
+    .hint { margin: 6px 0 0; color: #78827e; font-size: 11px; line-height: 1.45; }
+    .experience {
+      margin-top: 13px;
+      padding: 17px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+    }
+    .experience + .experience { margin-top: 12px; }
+    .experience-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .experience-head strong { font-size: 13px; }
+    .remove-experience { padding: 4px; color: #a14c3c; background: none; border: 0; font-size: 12px; }
+    .inline-action { margin-top: 13px; padding: 7px 0; color: var(--green); background: none; border: 0; font-size: 13px; font-weight: 750; }
+    .toggle-row { display: flex; align-items: center; gap: 10px; margin-top: 19px; }
+    .toggle-row input { width: 18px; min-height: 18px; height: 18px; margin: 0; accent-color: var(--green); }
+    .toggle-row label { margin: 0; font-size: 13px; font-weight: 550; }
+    .form-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #edf0f4;
+    }
+    .footer-hint { color: var(--muted); font-size: 12px; }
+    .actions { display: flex; gap: 9px; }
+    .button {
+      min-height: 43px;
+      padding: 0 16px;
+      border: 1px solid transparent;
+      border-radius: 5px;
+      font-size: 13px;
+      font-weight: 750;
+      transition: transform .15s ease, background .15s ease;
+    }
+    .button:hover { transform: translateY(-1px); }
+    .button.secondary { color: var(--ink); background: transparent; border-color: #dce2e9; }
+    .button.primary { color: white; background: var(--green); }
+    .button.primary:hover { background: var(--green-dark); }
+    .button[hidden] { display: none; }
+    .status { min-height: 22px; margin-top: 14px; color: #a14c3c; font-size: 13px; }
+    .result { display: none; margin-top: 20px; padding: 19px; background: var(--mint); border-radius: 8px; }
+    .result.visible { display: block; animation: reveal .25s ease both; }
+    .result h3 { margin-bottom: 5px; font-size: 16px; }
+    .result p { color: #446158; font-size: 13px; line-height: 1.5; }
+    .result pre { overflow: auto; max-height: 230px; padding: 12px; background: rgba(255,255,255,.72); border-radius: 4px; font-size: 11px; line-height: 1.5; }
+    .copy-button { padding: 7px 0; color: var(--green-dark); background: none; border: 0; font-size: 12px; font-weight: 750; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    @keyframes rise { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes reveal { from { opacity: 0; transform: translateX(5px); } to { opacity: 1; transform: translateX(0); } }
+    @media (max-width: 760px) {
+      .shell { width: min(100% - 32px, 600px); }
+      header { height: 64px; }
+      .header-nav { gap: 10px; }
+      .header-nav a, .powered-by { display: none; }
+      .brand { gap: 8px; font-size: 14px; }
+      .brand-mark { width: 33px; height: 33px; }
+      main { padding: 33px 0 48px; }
+      .intro { margin-bottom: 28px; }
+      .intro h1 { font-size: 30px; }
+      .layout { width: 100%; }
+      .step-list { margin-bottom: 26px; }
+      .step-item { flex-direction: column; gap: 6px; padding: 0 3px; text-align: center; font-size: 10px; }
+      .step-item > span:last-child { min-height: 26px; }
+      .step-number { flex-basis: 32px; width: 32px; height: 32px; }
+      .privacy-note { margin: -13px 0 20px; }
+      .form-panel { min-height: auto; }
+      .fields { grid-template-columns: 1fr; gap: 15px; }
+      .field.full { grid-column: auto; }
+      h2 { font-size: 22px; }
+      .occupation-options { gap: 9px; }
+      .occupation-option { min-height: 74px; gap: 8px; padding: 11px; border-radius: 11px; font-size: 12px; }
+      .occupation-icon { flex-basis: 22px; width: 22px; }
+      .form-footer { align-items: flex-start; flex-direction: column; }
+      .actions { width: 100%; }
+      .actions .button { flex: 1; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="brand"><span class="brand-mark" aria-hidden="true">+</span><span>SmartStart <span style="font-weight:500;color:#637087">Coach</span></span></div>
+      <nav class="header-nav" aria-label="Navigation principale">
+        <a class="active" href="#candidate-form">Pratique</a>
+        <a href="#candidate-form">Mes progrès ↗</a>
+        <div class="language-switch" aria-label="Langue de l’entretien">
+          <button type="button" data-language-choice="de" aria-pressed="false">DE</button>
+          <button type="button" data-language-choice="fr" aria-pressed="true">FR</button>
+          <button type="button" data-language-choice="it" aria-pressed="false">IT</button>
+        </div>
+        <span class="powered-by"><span style="color:#e32920;font-size:16px">+</span> Powered by <strong>Apertus</strong></span>
+      </nav>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <div class="eyebrow">Un peu d’entraînement. Un grand premier pas.</div>
+        <h1 id="page-title">Prépare ton entretien.<br><span style="color:#e32920">Décroche ton apprentissage.</span></h1>
+        <p>La prochaine étape commence par une conversation. Prépare-toi avec un coach d’entretien pensé pour ton avenir en Suisse.</p>
+      </section>
+
+      <div class="layout">
+        <aside class="rail" aria-label="Progression du formulaire">
+          <div class="progress-title">TON PROFIL <span id="progress-count">· 1 sur 3</span></div>
+          <nav class="step-list">
+            <div class="step-item active" data-step-indicator="0"><span class="step-number">1</span><span>Ton profil</span></div>
+            <div class="step-item" data-step-indicator="1"><span class="step-number">2</span><span>Ton apprentissage</span></div>
+            <div class="step-item" data-step-indicator="2"><span class="step-number">3</span><span>Ton défi</span></div>
+          </nav>
+          <div class="privacy-note"><strong>Ta vie privée compte.</strong>Ne donne pas ton nom de famille, ton e-mail, ton adresse ou ton numéro de téléphone. Le profil n’est pas enregistré.</div>
+        </aside>
+
+        <form id="candidate-form" class="form-panel" novalidate>
+          <section class="step-content active" data-step="0" aria-labelledby="step-one-title">
+            <div class="step-kicker">Étape 1 · 3</div>
+            <h2 id="step-one-title">Choisis la langue de ton entretien</h2>
+            <p class="step-description">Ces repères aident le coach à choisir des questions adaptées à ta situation scolaire.</p>
+            <div class="fields">
+              <div class="field">
+                <label for="language">Langue de l’entretien</label>
+                <select id="language" name="language">
+                  <option value="fr" selected>Français</option>
+                  <option value="de">Allemand</option>
+                  <option value="it">Italien</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="first-name">Prénom <span class="optional">(facultatif)</span></label>
+                <input id="first-name" name="first_name" maxlength="40" autocomplete="given-name" placeholder="Ex. Luca">
+              </div>
+              <div class="field">
+                <label for="age">Âge <span class="optional">(facultatif)</span></label>
+                <select id="age" name="age">
+                  <option value="">Je préfère ne pas répondre</option>
+                  <option>14</option><option>15</option><option>16</option><option>17</option>
+                  <option>18</option><option>19</option><option>20</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="canton">Canton <span class="optional">(facultatif)</span></label>
+                <input id="canton" name="canton" maxlength="20" placeholder="Ex. Vaud">
+              </div>
+              <div class="field">
+                <label for="school-level">Niveau scolaire <span class="optional">(facultatif)</span></label>
+                <select id="school-level" name="school_level">
+                  <option value="">Choisir un niveau</option>
+                  <option>Sek A</option><option>Sek B</option><option>Sek C</option>
+                  <option>Cycle d’orientation</option><option>Scuola media</option><option>Autre</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="grade">Classe / année <span class="optional">(facultatif)</span></label>
+                <input id="grade" name="grade" maxlength="40" placeholder="Ex. 11H">
+              </div>
+              <div class="field full">
+                <label for="strong-subjects">Matières où tu te sens à l’aise <span class="optional">(facultatif)</span></label>
+                <input id="strong-subjects" name="strong_subjects" maxlength="250" placeholder="Ex. maths, dessin, français">
+                <p class="hint">Sépare les matières par des virgules.</p>
+              </div>
+              <div class="field full">
+                <label for="weak-subjects">Matières que tu aimerais améliorer <span class="optional">(facultatif)</span></label>
+                <input id="weak-subjects" name="weak_subjects" maxlength="250" placeholder="Ex. allemand, géométrie">
+                <p class="hint">Tu peux laisser ce champ vide.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="step-content" data-step="1" aria-labelledby="step-two-title">
+            <div class="step-kicker">Étape 2 · 3</div>
+            <h2 id="step-two-title">Pour quel apprentissage postules-tu ?</h2>
+            <p class="step-description">Choisis un domaine ou indique un autre métier qui t’intéresse.</p>
+            <div class="fields">
+              <div class="field full">
+                <span class="legend">Domaine d’apprentissage</span>
+                <div class="occupation-options" role="radiogroup" aria-label="Domaine d’apprentissage">
+                  <button class="occupation-option" type="button" role="radio" aria-checked="false" data-occupation="Polymécanicien·ne"><span class="occupation-icon" aria-hidden="true">⚙</span><span>Polymécanicien·ne</span><span class="occupation-check" aria-hidden="true"></span></button>
+                  <button class="occupation-option" type="button" role="radio" aria-checked="false" data-occupation="Employé·e du commerce de détail"><span class="occupation-icon" aria-hidden="true">▱</span><span>Commerce de détail</span><span class="occupation-check" aria-hidden="true"></span></button>
+                  <button class="occupation-option" type="button" role="radio" aria-checked="false" data-occupation="Informaticien·ne"><span class="occupation-icon" aria-hidden="true">▣</span><span>Informatique</span><span class="occupation-check" aria-hidden="true"></span></button>
+                  <button class="occupation-option" type="button" role="radio" aria-checked="false" data-occupation="Assistant·e en soins"><span class="occupation-icon" aria-hidden="true">♡</span><span>Santé</span><span class="occupation-check" aria-hidden="true"></span></button>
+                  <button class="occupation-option" type="button" role="radio" aria-checked="false" data-occupation="Employé·e de commerce"><span class="occupation-icon" aria-hidden="true">▤</span><span>Commerce / bureau</span><span class="occupation-check" aria-hidden="true"></span></button>
+                  <button class="occupation-option" type="button" role="radio" aria-checked="false" data-occupation="Autre"><span class="occupation-icon" aria-hidden="true">+</span><span>Autre métier</span><span class="occupation-check" aria-hidden="true"></span></button>
+                </div>
+                <input id="occupation" name="target_occupation" type="hidden">
+                <div class="field" id="other-occupation-field" hidden>
+                  <label for="other-occupation">Quel métier vises-tu ?</label>
+                  <input id="other-occupation" maxlength="80" placeholder="Ex. assistant·e en soins">
+                </div>
+              </div>
+              <div class="field full offer-field">
+                <label for="posting-text">Offre d’apprentissage <span class="optional">(facultatif)</span></label>
+                <textarea id="posting-text" name="posting_text" maxlength="4000" placeholder="Colle ici la description de l’offre d’emploi…"></textarea>
+              </div>
+              <div class="field full">
+                <label for="story">Pourquoi ce métier t’intéresse-t-il ? <span class="optional">(facultatif)</span></label>
+                <textarea id="story" name="career_choice_story" maxlength="800" placeholder="Une activité, une rencontre ou un stage t’a peut-être donné envie…"></textarea>
+              </div>
+            </div>
+          </section>
+
+          <section class="step-content" data-step="2" aria-labelledby="step-three-title">
+            <div class="step-kicker">Étape 3 · 3</div>
+            <h2 id="step-three-title">Qu’aimerais-tu travailler ?</h2>
+            <p class="step-description">Un stage, un projet scolaire, un club ou une responsabilité peuvent déjà donner de bons exemples.</p>
+            <div class="fields">
+              <div class="field full">
+                <label for="challenge">Ton objectif d’entraînement</label>
+                <select id="challenge" name="challenge">
+                  <option value="">Choisir un objectif</option>
+                  <option value="confidence">Gagner en confiance</option>
+                  <option value="motivation">Expliquer ma motivation</option>
+                  <option value="strengths">Parler de mes points forts</option>
+                  <option value="difficult_questions">Répondre aux questions difficiles</option>
+                  <option value="general_practice">M’entraîner à un entretien complet</option>
+                </select>
+              </div>
+              <div class="field full">
+                <label for="hobbies">Activités ou centres d’intérêt <span class="optional">(facultatif)</span></label>
+                <input id="hobbies" name="hobbies" maxlength="300" placeholder="Ex. football, cuisine, jeux de construction">
+              </div>
+              <div class="field full">
+                <label for="strengths">Tes points forts <span class="optional">(facultatif)</span></label>
+                <input id="strengths" name="strengths" maxlength="300" placeholder="Ex. organisé·e, curieux·se, à l’écoute">
+              </div>
+              <div class="field full">
+                <label for="development-areas">Ce que tu aimerais travailler <span class="optional">(facultatif)</span></label>
+                <input id="development-areas" name="development_areas" maxlength="300" placeholder="Ex. parler devant un groupe, demander de l’aide">
+              </div>
+              <div class="field full">
+                <span class="legend">Stages et autres expériences <span class="optional">(facultatif)</span></span>
+                <div id="experiences"></div>
+                <button type="button" class="inline-action" id="add-experience">+ Ajouter une expérience</button>
+              </div>
+            </div>
+            <div class="toggle-row">
+              <input id="formal-address" type="checkbox" name="formal_address">
+              <label for="formal-address">Utiliser une formule d’adresse formelle pendant l’entretien</label>
+            </div>
+          </section>
+
+          <div class="form-footer">
+            <span class="footer-hint" id="footer-hint">Les champs marqués facultatifs peuvent rester vides.</span>
+            <div class="actions">
+              <button class="button secondary" type="button" id="previous" hidden>Retour</button>
+              <button class="button primary" type="button" id="next">Continuer</button>
+              <button class="button primary" type="submit" id="submit" hidden>Valider mon profil</button>
+            </div>
+          </div>
+          <div class="status" id="status" role="status" aria-live="polite"></div>
+          <section class="result" id="result" aria-live="polite">
+            <h3>Ton profil est prêt</h3>
+            <p>Il a été vérifié par le backend. Il n’est pas enregistré : il sert seulement à préparer ton entretien.</p>
+            <button type="button" class="button primary" id="start-interview">Commencer l’entretien</button>
+            <pre id="result-json"></pre>
+            <button type="button" class="copy-button" id="copy-config">Copier le profil JSON</button>
+          </section>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <template id="experience-template">
+    <fieldset class="experience">
+      <legend class="sr-only">Expérience</legend>
+      <div class="experience-head"><strong>Une expérience</strong><button class="remove-experience" type="button">Supprimer</button></div>
+      <div class="fields">
+        <div class="field">
+          <label>Type</label>
+          <select data-field="type">
+            <option value="schnupperlehre">Stage de découverte</option>
+            <option value="school_project">Projet scolaire</option>
+            <option value="club">Club ou association</option>
+            <option value="other">Autre expérience</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Métier ou activité</label>
+          <input data-field="occupation" maxlength="80" placeholder="Ex. cuisine, menuiserie">
+        </div>
+        <div class="field">
+          <label>Durée en jours</label>
+          <input data-field="duration_days" type="number" min="0" max="365" inputmode="numeric" placeholder="Ex. 3">
+        </div>
+        <div class="field">
+          <label>Type de lieu <span class="optional">(facultatif)</span></label>
+          <input data-field="company_type" maxlength="80" placeholder="Ex. atelier, magasin">
+        </div>
+        <div class="field full">
+          <label>Qu’en as-tu retenu ?</label>
+          <textarea data-field="what_happened" maxlength="500" placeholder="Une tâche que tu as aimée, quelque chose appris…"></textarea>
+        </div>
+      </div>
+    </fieldset>
+  </template>
+
+  <script>
+    const form = document.querySelector("#candidate-form");
+    const steps = [...document.querySelectorAll(".step-content")];
+    const indicators = [...document.querySelectorAll("[data-step-indicator]")];
+    const previousButton = document.querySelector("#previous");
+    const nextButton = document.querySelector("#next");
+    const submitButton = document.querySelector("#submit");
+    const status = document.querySelector("#status");
+    const result = document.querySelector("#result");
+    let currentStep = 0;
+
+    function showStep(index) {
+      currentStep = index;
+      steps.forEach((step, stepIndex) => step.classList.toggle("active", stepIndex === index));
+      indicators.forEach((indicator, stepIndex) => {
+        indicator.classList.toggle("active", stepIndex === index);
+        indicator.classList.toggle("complete", stepIndex < index);
+        indicator.querySelector(".step-number").textContent = stepIndex < index ? "✓" : String(stepIndex + 1);
+      });
+      document.querySelector("#progress-count").textContent = `· ${index + 1} sur ${steps.length}`;
+      previousButton.hidden = index === 0;
+      nextButton.hidden = index === steps.length - 1;
+      submitButton.hidden = index !== steps.length - 1;
+      status.textContent = "";
+      result.classList.remove("visible");
+      if (window.matchMedia("(max-width: 760px)").matches) {
+        document.querySelector(".form-panel").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
+    function splitList(value) {
+      return value.split(",").map((item) => item.trim()).filter(Boolean);
+    }
+
+    function optionalValue(value) {
+      const trimmed = value.trim();
+      return trimmed || undefined;
+    }
+
+    function makeProfile() {
+      const profile = {
+        first_name: optionalValue(form.elements.first_name.value),
+        age: form.elements.age.value ? Number(form.elements.age.value) : undefined,
+        canton: optionalValue(form.elements.canton.value),
+        school: {
+          level: optionalValue(form.elements.school_level.value),
+          grade: optionalValue(form.elements.grade.value),
+          strong_subjects: splitList(form.elements.strong_subjects.value),
+          weak_subjects: splitList(form.elements.weak_subjects.value),
+        },
+        hobbies: splitList(form.elements.hobbies.value),
+        strengths: splitList(form.elements.strengths.value),
+        development_areas: splitList(form.elements.development_areas.value),
+        target_occupation: optionalValue(form.elements.target_occupation.value),
+        career_choice_story: optionalValue(form.elements.career_choice_story.value),
+        experiences: [...document.querySelectorAll(".experience")].map((entry) => {
+          const experience = {};
+          entry.querySelectorAll("[data-field]").forEach((input) => {
+            const value = input.value.trim();
+            if (!value) return;
+            experience[input.dataset.field] = input.dataset.field === "duration_days" ? Number(value) : value;
+          });
+          return experience;
+        }).filter((experience) => Object.keys(experience).length > 0),
+      };
+      Object.keys(profile).forEach((key) => profile[key] === undefined && delete profile[key]);
+      if (profile.school && !profile.school.level && !profile.school.grade &&
+          profile.school.strong_subjects.length === 0 && profile.school.weak_subjects.length === 0) {
+        delete profile.school;
+      }
+      const challenge = form.elements.challenge.value;
+      const config = {
+        language: form.elements.language.value,
+        formal_address: form.elements.formal_address.checked,
+        posting_text: optionalValue(form.elements.posting_text.value),
+        challenge: challenge || undefined,
+        profile,
+      };
+      Object.keys(config).forEach((key) => config[key] === undefined && delete config[key]);
+      return config;
+    }
+
+    function setLanguage(language) {
+      form.elements.language.value = language;
+      document.querySelectorAll("[data-language-choice]").forEach((button) => {
+        button.setAttribute("aria-pressed", String(button.dataset.languageChoice === language));
+      });
+    }
+
+    function selectOccupation(button) {
+      const selectedOccupation = button.dataset.occupation;
+      const otherField = document.querySelector("#other-occupation-field");
+      const otherInput = document.querySelector("#other-occupation");
+      document.querySelectorAll(".occupation-option").forEach((option) => {
+        const isSelected = option === button;
+        option.setAttribute("aria-checked", String(isSelected));
+        option.querySelector(".occupation-check").textContent = isSelected ? "✓" : "";
+      });
+      otherField.hidden = selectedOccupation !== "Autre";
+      form.elements.target_occupation.value = selectedOccupation === "Autre"
+        ? otherInput.value.trim()
+        : selectedOccupation;
+      if (selectedOccupation === "Autre") otherInput.focus();
+    }
+
+    function addExperience() {
+      const fragment = document.querySelector("#experience-template").content.cloneNode(true);
+      const experienceIndex = document.querySelectorAll(".experience").length + 1;
+      fragment.querySelectorAll(".experience .field").forEach((field, fieldIndex) => {
+        const input = field.querySelector("input, select, textarea");
+        const label = field.querySelector("label");
+        input.id = `experience-${experienceIndex}-${fieldIndex}`;
+        label.htmlFor = input.id;
+      });
+      fragment.querySelector(".remove-experience").addEventListener("click", (event) => {
+        event.currentTarget.closest(".experience").remove();
+      });
+      document.querySelector("#experiences").append(fragment);
+    }
+
+    nextButton.addEventListener("click", () => {
+      if (currentStep === 1 && !form.elements.target_occupation.value.trim()) {
+        status.textContent = "Indique le métier ou l’apprentissage que tu veux préparer.";
+        form.elements.target_occupation.focus();
+        return;
+      }
+      showStep(Math.min(currentStep + 1, steps.length - 1));
+    });
+    previousButton.addEventListener("click", () => showStep(Math.max(currentStep - 1, 0)));
+    document.querySelector("#add-experience").addEventListener("click", addExperience);
+    document.querySelectorAll("[data-language-choice]").forEach((button) => {
+      button.addEventListener("click", () => setLanguage(button.dataset.languageChoice));
+    });
+    form.elements.language.addEventListener("change", () => setLanguage(form.elements.language.value));
+    document.querySelectorAll(".occupation-option").forEach((button) => {
+      button.addEventListener("click", () => selectOccupation(button));
+    });
+    document.querySelector("#other-occupation").addEventListener("input", (event) => {
+      form.elements.target_occupation.value = event.currentTarget.value.trim();
+    });
+    addExperience();
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      status.textContent = "Vérification du profil…";
+      submitButton.disabled = true;
+      const config = makeProfile();
+      try {
+        const response = await fetch("/api/profile", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(config),
+        });
+        const payload = await response.json();
+        if (!response.ok) {
+          const details = (payload.details || []).map((detail) => detail.message).join(" ");
+          throw new Error([payload.error, details].filter(Boolean).join(" "));
+        }
+        document.querySelector("#result-json").textContent = JSON.stringify(payload.config, null, 2);
+        result.classList.add("visible");
+        status.textContent = "Profil validé.";
+        document.querySelector("#start-interview").onclick = () => {
+          sessionStorage.setItem("smartstart.config", JSON.stringify(payload.config));
+          sessionStorage.setItem("smartstart.language", payload.config.language || "fr");
+          window.location.href = "chat.html";
+        };
+        document.querySelector("#copy-config").onclick = async () => {
+          await navigator.clipboard.writeText(JSON.stringify(payload.config, null, 2));
+          status.textContent = "Profil JSON copié.";
+        };
+        result.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      } catch (error) {
+        status.textContent = error.message || "Impossible de joindre le backend. Vérifie qu’il est lancé.";
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
